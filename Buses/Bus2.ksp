@@ -1,0 +1,93 @@
+macro Bus2.init()
+	declare @bus2_name := Mixer.get_name(1)
+	declare bus2_x := Mixer.get_x_offset(1)
+
+	ui.switch(bus2_load, "enabled_switch", bus2_x + 0, 15, 79, 63, 1)
+	ui.slider(bus2_pan, "knob-needle", bus2_x + 28, 88, 500000, 0, 1000000, 1)
+	ui.switch(bus2_mute, "mute", bus2_x + 17, 156, 22, 25, 0)
+	ui.switch(bus2_solo, "solo", bus2_x + 37, 156, 22, 25, 0)
+	ui.level_meter(bus2_meter_l, bus2_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 1)
+	ui.level_meter(bus2_meter_r, bus2_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 1)
+	ui.slider(bus2_volume, "slider", bus2_x + 32, 197, 630000, 0, 1000000, 1)
+	bus2_volume -> mouse_behaviour := -1050
+	ui.slider(bus2_double, "knob-needle", bus2_x + 28, 390, 1000, 0, 1000, 1)
+	ui.menu(bus2_output, "output", bus2_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
+
+	add_menu_item(bus2_output, "Default", -1)
+	for i := 0 to NUM_OUTPUT_CHANNELS - 1
+		add_menu_item(bus2_output, output_channel_name(i), i)
+	end for
+
+	declare bus2_ui_elements[9] := (-999)
+	bus2_ui_elements[0] := get_ui_id(bus2_load)
+	bus2_ui_elements[1] := get_ui_id(bus2_pan)
+	bus2_ui_elements[2] := get_ui_id(bus2_mute)
+	bus2_ui_elements[3] := get_ui_id(bus2_solo)
+	bus2_ui_elements[4] := get_ui_id(bus2_meter_l)
+	bus2_ui_elements[5] := get_ui_id(bus2_meter_r)
+	bus2_ui_elements[6] := get_ui_id(bus2_volume)
+	bus2_ui_elements[7] := get_ui_id(bus2_double)
+	bus2_ui_elements[8] := get_ui_id(bus2_output)
+end macro
+
+function Bus2.show()
+	show_elements_array(bus2_ui_elements)
+	call Bus2.update_meter()
+end function
+
+function Bus2.hide()
+	hide_elements_array(bus2_ui_elements)
+end function
+
+// Load / Purge
+on ui_control(bus2_load)
+	enabled_buses[1] := bus2_load
+	Purge.update_purged()
+end on
+
+// Volume
+on ui_control(bus2_volume)
+	set_engine_par(ENGINE_PAR_VOLUME, bus2_volume, -1, -1, NI_BUS_OFFSET + 1)
+	message(bus2_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 1) & " dB")
+end on
+
+// Pan
+on ui_control(bus2_pan)
+	set_engine_par(ENGINE_PAR_PAN, bus2_pan, -1, -1, NI_BUS_OFFSET + 1)
+	message(bus2_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 1))
+	call Bus2.update_meter()
+end on
+
+// Mutes
+on ui_control(bus2_mute)
+	call Mixer.handle_mutes()
+end on
+
+// Solos
+on ui_control(bus2_solo)
+	call Mixer.handle_solos()
+end on
+
+// Double
+on ui_control(bus2_double)
+	if (bus2_double = 0)
+		message(bus2_name & " Double: Off")
+	else
+		message(bus2_name & " Double: " & bus2_double/10 & "% Wide")
+	end if
+end on
+
+// Output
+on ui_control(bus2_output)
+	set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus2_output, -1, -1, NI_BUS_OFFSET + 1)
+end on
+
+function Bus2.update_meter()
+	if (bus2_pan > 500000)
+		hide_element(bus2_meter_l)
+		show_element(bus2_meter_r)
+	else
+		show_element(bus2_meter_l)
+		hide_element(bus2_meter_r)
+	end if
+end function

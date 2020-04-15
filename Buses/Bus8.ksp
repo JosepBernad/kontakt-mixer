@@ -1,0 +1,102 @@
+macro Bus8.init()
+	declare @bus8_name := Mixer.get_name(7)
+	declare bus8_x := Mixer.get_x_offset(7)
+
+	ui.switch(bus8_load, "enabled_switch", bus8_x + 0, 15, 79, 63, 1)
+	// ui.slider(bus8_pan, "knob-needle", bus8_x + 28, 88, 500000, 0, 1000000, 1)
+	ui.slider(bus8_width, "knob-needle", bus8_x + 28, 88, 1000000, 0, 1000000, 1)
+	ui.switch(bus8_mute, "mute", bus8_x + 17, 156, 22, 25, 0)
+	ui.switch(bus8_solo, "solo", bus8_x + 37, 156, 22, 25, 0)
+	ui.level_meter(bus8_meter_l, bus8_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 7)
+	ui.level_meter(bus8_meter_r, bus8_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 7)
+	ui.slider(bus8_volume, "slider", bus8_x + 32, 197, 630000, 0, 1000000, 1)
+	bus8_volume -> mouse_behaviour := -1050
+	// ui.slider(bus8_width, "knob-needle", bus8_x + 28, 390, 1000000, 0, 1000000, 1)
+	ui.menu(bus8_output, "output", bus8_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
+
+	add_menu_item(bus8_output, "Default", -1)
+	for i := 0 to NUM_OUTPUT_CHANNELS - 1
+		add_menu_item(bus8_output, output_channel_name(i), i)
+	end for
+
+	declare bus8_ui_elements[9] := (-999)
+	bus8_ui_elements[0] := get_ui_id(bus8_load)
+	// bus8_ui_elements[1] := get_ui_id(bus8_pan)
+	bus8_ui_elements[1] := get_ui_id(bus8_width)
+	bus8_ui_elements[2] := get_ui_id(bus8_mute)
+	bus8_ui_elements[3] := get_ui_id(bus8_solo)
+	bus8_ui_elements[4] := get_ui_id(bus8_meter_l)
+	bus8_ui_elements[5] := get_ui_id(bus8_meter_r)
+	bus8_ui_elements[6] := get_ui_id(bus8_volume)
+	// bus8_ui_elements[7] := get_ui_id(bus8_width)
+	bus8_ui_elements[8] := get_ui_id(bus8_output)
+end macro
+
+function Bus8.show()
+	// show_elements_array(bus8_ui_elements)
+	// call Bus8.update_meter()
+end function
+
+function Bus8.hide()
+	// hide_elements_array(bus8_ui_elements)
+end function
+
+// // Load / Purge
+// on ui_control(bus8_load)
+// 	enabled_buses[7] := bus8_load
+// 	Purge.update_purged()
+// end on
+
+// // Volume
+// on ui_control(bus8_volume)
+// 	set_engine_par(ENGINE_PAR_VOLUME, bus8_volume, -1, -1, NI_BUS_OFFSET + 7)
+// 	message(bus8_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 7) & " dB")
+// end on
+
+// // // Pan
+// // on ui_control(bus8_pan)
+// // 	set_engine_par(ENGINE_PAR_PAN, bus8_pan, -1, -1, NI_BUS_OFFSET + 7)
+// // 	message(bus8_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 7))
+// // 	call Bus8.update_meter()
+// // end on
+
+// // Mutes
+// on ui_control(bus8_mute)
+// 	call Mixer.handle_mutes()
+// end on
+
+// // Solos
+// on ui_control(bus8_solo)
+// 	call Mixer.handle_solos()
+// end on
+
+// // Width
+// on ui_control(bus8_width)
+// 	if (bus8_width = 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, bus8_width, bus8_groups, 6, -1)
+// 		message(bus8_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus8_groups[0], 6, -1))
+// 	else if (bus8_width < 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, 500000 - bus8_width, bus8_groups, 6, -1)
+// 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 0, bus8_groups, 7, -1)
+// 		message(bus8_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus8_groups[0], 6, -1) & " (Swapped)")
+// 	else if (bus8_width > 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, bus8_width - 500000, bus8_groups, 6, -1)
+// 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 1, bus8_groups, 7, -1)
+// 		message(bus8_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus8_groups[0], 6, -1))
+// 	end if
+// end on
+
+// // Output
+// on ui_control(bus8_output)
+// 	set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus8_output, -1, -1, NI_BUS_OFFSET + 7)
+// end on
+
+// function Bus8.update_meter()
+// 	if (bus8_pan > 500000)
+// 		hide_element(bus8_meter_l)
+// 		show_element(bus8_meter_r)
+// 	else
+// 		show_element(bus8_meter_l)
+// 		hide_element(bus8_meter_r)
+// 	end if
+// end function

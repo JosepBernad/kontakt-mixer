@@ -1,0 +1,109 @@
+macro Bus7.init()
+	declare @bus7_name := Mixer.get_name(6)
+	declare bus7_x := Mixer.get_x_offset(6)
+
+	ui.switch(bus7_load, "enabled_switch", bus7_x + 0, 15, 79, 63, 1)
+	// ui.slider(bus7_pan, "knob-needle", bus7_x + 28, 88, 500000, 0, 1000000, 1)
+	ui.slider(bus7_width, "knob-needle", bus7_x + 28, 88, 1000000, 0, 1000000, 1)
+	ui.switch(bus7_mute, "mute", bus7_x + 17, 156, 22, 25, 0)
+	ui.switch(bus7_solo, "solo", bus7_x + 37, 156, 22, 25, 0)
+	ui.level_meter(bus7_meter_l, bus7_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 6)
+	ui.level_meter(bus7_meter_r, bus7_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 6)
+	ui.slider(bus7_volume, "slider", bus7_x + 32, 197, 630000, 0, 1000000, 1)
+	bus7_volume -> mouse_behaviour := -1050
+	// ui.slider(bus7_width, "knob-needle", bus7_x + 28, 390, 1000000, 0, 1000000, 1)
+	ui.slider(bus7_bleed, "knob-needle", bus7_x + 28, 390, 0_db_24, 0, 0_db_24*2, 1)
+	ui.menu(bus7_output, "output", bus7_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
+
+	add_menu_item(bus7_output, "Default", -1)
+	for i := 0 to NUM_OUTPUT_CHANNELS - 1
+		add_menu_item(bus7_output, output_channel_name(i), i)
+	end for
+
+	declare bus7_ui_elements[9] := (-999)
+	bus7_ui_elements[0] := get_ui_id(bus7_load)
+	// bus7_ui_elements[1] := get_ui_id(bus7_pan)
+	bus7_ui_elements[1] := get_ui_id(bus7_width)
+	bus7_ui_elements[2] := get_ui_id(bus7_mute)
+	bus7_ui_elements[3] := get_ui_id(bus7_solo)
+	bus7_ui_elements[4] := get_ui_id(bus7_meter_l)
+	bus7_ui_elements[5] := get_ui_id(bus7_meter_r)
+	bus7_ui_elements[6] := get_ui_id(bus7_volume)
+	bus7_ui_elements[7] := get_ui_id(bus7_bleed)
+	bus7_ui_elements[8] := get_ui_id(bus7_output)
+end macro
+
+function Bus7.show()
+	// show_elements_array(bus7_ui_elements)
+	// call Bus7.update_meter()
+end function
+
+function Bus7.hide()
+	// hide_elements_array(bus7_ui_elements)
+end function
+
+// // Load / Purge
+// on ui_control(bus7_load)
+// 	enabled_buses[6] := bus7_load
+// 	Purge.update_purged()
+// end on
+
+// // Volume
+// on ui_control(bus7_volume)
+// 	set_engine_par(ENGINE_PAR_VOLUME, bus7_volume, -1, -1, NI_BUS_OFFSET + 6)
+// 	message(bus7_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 6) & " dB")
+// end on
+
+// // // Pan
+// // on ui_control(bus7_pan)
+// // 	set_engine_par(ENGINE_PAR_PAN, bus7_pan, -1, -1, NI_BUS_OFFSET + 6)
+// // 	message(bus7_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 6))
+// // 	call Bus7.update_meter()
+// // end on
+
+// // Mutes
+// on ui_control(bus7_mute)
+// 	call Mixer.handle_mutes()
+// end on
+
+// // Solos
+// on ui_control(bus7_solo)
+// 	call Mixer.handle_solos()
+// end on
+
+// // Width
+// on ui_control(bus7_width)
+// 	if (bus7_width = 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, bus7_width, bus7_groups, 6, -1)
+// 		message(bus7_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus7_groups[0], 6, -1))
+// 	else if (bus7_width < 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, 500000 - bus7_width, bus7_groups, 6, -1)
+// 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 0, bus7_groups, 7, -1)
+// 		message(bus7_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus7_groups[0], 6, -1) & " (Swapped)")
+// 	else if (bus7_width > 500000)
+// 		set_engine_par_array(ENGINE_PAR_STEREO, bus7_width - 500000, bus7_groups, 6, -1)
+// 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 1, bus7_groups, 7, -1)
+// 		message(bus7_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus7_groups[0], 6, -1))
+// 	end if
+// end on
+
+// // Bleed
+// on ui_control(bus7_bleed)
+// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, bus7_bleed, bus7_bleeding_groups, 4, -1)
+// 	message(bus7_name & " Bleeding Volume: " & get_engine_par_disp(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, bus7_bleeding_groups[0], 4, -1) & " dB")
+// end on
+
+// // Output
+// on ui_control(bus7_output)
+// 	set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus7_output, -1, -1, NI_BUS_OFFSET + 6)
+// end on
+
+// function Bus7.update_meter()
+// 	if (bus7_pan > 500000)
+// 		hide_element(bus7_meter_l)
+// 		show_element(bus7_meter_r)
+// 	else
+// 		show_element(bus7_meter_l)
+// 		hide_element(bus7_meter_r)
+// 	end if
+// end function

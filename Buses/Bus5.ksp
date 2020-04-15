@@ -1,0 +1,108 @@
+macro Bus5.init()
+	declare @bus5_name := Mixer.get_name(4)
+	declare bus5_x := Mixer.get_x_offset(4)
+
+	ui.switch(bus5_load, "enabled_switch", bus5_x + 0, 15, 79, 63, 1)
+	ui.slider(bus5_pan, "knob-needle", bus5_x + 28, 88, 750000, 0, 1000000, 1)
+	ui.switch(bus5_mute, "mute", bus5_x + 17, 156, 22, 25, 0)
+	ui.switch(bus5_solo, "solo", bus5_x + 37, 156, 22, 25, 0)
+	ui.level_meter(bus5_meter_l, bus5_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 4)
+	ui.level_meter(bus5_meter_r, bus5_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 4)
+	ui.slider(bus5_volume, "slider", bus5_x + 32, 197, 630000, 0, 1000000, 1)
+	bus5_volume -> mouse_behaviour := -1050
+	// ui.slider(bus5_width, "knob-needle", bus5_x + 28, 390, 1000000, 0, 1000000, 1)
+	ui.slider(bus5_bleed, "knob-needle", bus5_x + 28, 390, 0_db_24, 0, 0_db_24*2, 1)
+	ui.menu(bus5_output, "output", bus5_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
+
+	add_menu_item(bus5_output, "Default", -1)
+	for i := 0 to NUM_OUTPUT_CHANNELS - 1
+		add_menu_item(bus5_output, output_channel_name(i), i)
+	end for
+
+	declare bus5_ui_elements[9] := (-999)
+	bus5_ui_elements[0] := get_ui_id(bus5_load)
+	bus5_ui_elements[1] := get_ui_id(bus5_pan)
+	bus5_ui_elements[2] := get_ui_id(bus5_mute)
+	bus5_ui_elements[3] := get_ui_id(bus5_solo)
+	bus5_ui_elements[4] := get_ui_id(bus5_meter_l)
+	bus5_ui_elements[5] := get_ui_id(bus5_meter_r)
+	bus5_ui_elements[6] := get_ui_id(bus5_volume)
+	// bus5_ui_elements[7] := get_ui_id(bus5_width)
+	bus5_ui_elements[7] := get_ui_id(bus5_bleed)
+	bus5_ui_elements[8] := get_ui_id(bus5_output)
+end macro
+
+function Bus5.show()
+	// show_elements_array(bus5_ui_elements)
+	// call Bus5.update_meter()
+end function
+
+function Bus5.hide()
+	// hide_elements_array(bus5_ui_elements)
+end function
+
+// // Load / Purge
+// on ui_control(bus5_load)
+// 	enabled_buses[4] := bus5_load
+// 	Purge.update_purged()
+// end on
+
+// // Volume
+// on ui_control(bus5_volume)
+// 	set_engine_par(ENGINE_PAR_VOLUME, bus5_volume, -1, -1, NI_BUS_OFFSET + 4)
+// 	message(bus5_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 4) & " dB")
+// end on
+
+// // Pan
+// on ui_control(bus5_pan)
+// 	set_engine_par(ENGINE_PAR_PAN, bus5_pan, -1, -1, NI_BUS_OFFSET + 4)
+// 	message(bus5_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 4))
+// 	call Bus5.update_meter()
+// end on
+
+// // Mutes
+// on ui_control(bus5_mute)
+// 	call Mixer.handle_mutes()
+// end on
+
+// // Solos
+// on ui_control(bus5_solo)
+// 	call Mixer.handle_solos()
+// end on
+
+// // Width
+// // on ui_control(bus5_width)
+// // 	if (bus5_width = 500000)
+// // 		set_engine_par_array(ENGINE_PAR_STEREO, bus5_width, bus5_groups, 6, -1)
+// // 		message(bus5_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus5_groups[0], 6, -1))
+// // 	else if (bus5_width < 500000)
+// // 		set_engine_par_array(ENGINE_PAR_STEREO, 500000 - bus5_width, bus5_groups, 6, -1)
+// // 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 0, bus5_groups, 7, -1)
+// // 		message(bus5_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus5_groups[0], 6, -1) & " (Swapped)")
+// // 	else if (bus5_width > 500000)
+// // 		set_engine_par_array(ENGINE_PAR_STEREO, bus5_width - 500000, bus5_groups, 6, -1)
+// // 		set_engine_par_array(ENGINE_PAR_EFFECT_BYPASS, 1, bus5_groups, 7, -1)
+// // 		message(bus5_name & " Width: " & get_engine_par_disp(ENGINE_PAR_STEREO, bus5_groups[0], 6, -1))
+// // 	end if
+// // end on
+
+// // Bleed
+// on ui_control(bus5_bleed)
+// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, bus5_bleed, bus5_bleeding_groups, 4, -1)
+// 	message(bus5_name & " Bleeding Volume: " & get_engine_par_disp(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, bus5_bleeding_groups[0], 4, -1) & " dB")
+// end on
+
+// // Output
+// on ui_control(bus5_output)
+// 	set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus5_output, -1, -1, NI_BUS_OFFSET + 4)
+// end on
+
+// function Bus5.update_meter()
+// 	if (bus5_pan > 500000)
+// 		hide_element(bus5_meter_l)
+// 		show_element(bus5_meter_r)
+// 	else
+// 		show_element(bus5_meter_l)
+// 		hide_element(bus5_meter_r)
+// 	end if
+// end function
