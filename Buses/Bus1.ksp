@@ -1,93 +1,93 @@
-macro Bus1.init()
-	declare @bus1_name := Mixer.get_name(0)
-	declare bus1_x := Mixer.get_x_offset(0)
+USE_CODE_IF(1_BUS)
+	macro Bus1.init()
+		declare @bus1_name := Mixer.get_name(0)
+		declare bus1_x := Mixer.get_x_offset(0)
 
-	ui.switch(bus1_load, "enabled_switch", bus1_x + 0, 15, 79, 63, 1)
-	ui.slider(bus1_pan, "knob-needle", bus1_x + 28, 88, 500000, 0, 1000000, 1)
-	ui.switch(bus1_mute, "mute", bus1_x + 17, 156, 22, 25, 0)
-	ui.switch(bus1_solo, "solo", bus1_x + 37, 156, 22, 25, 0)
-	ui.level_meter(bus1_meter_l, bus1_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 0)
-	ui.level_meter(bus1_meter_r, bus1_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 0)
-	ui.slider(bus1_volume, "slider", bus1_x + 32, 198, 630000, 0, 1000000, 1)
-	bus1_volume -> mouse_behaviour := -1050
-	ui.slider(bus1_double, "knob-needle", bus1_x + 28, 390, 1000, 0, 1000, 1)
-	ui.menu(bus1_output, "output", bus1_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
+		ui.switch(bus1_load, "enabled_switch", bus1_x + 0, 15, 79, 63, 1)
+		ui.slider(bus1_pan, "knob-needle", bus1_x + 28, 88, 500000, 0, 1000000, 1)
+		ui.switch(bus1_mute, "mute", bus1_x + 17, 156, 22, 25, 0)
+		ui.switch(bus1_solo, "solo", bus1_x + 37, 156, 22, 25, 0)
+		ui.level_meter(bus1_meter_l, bus1_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 0, 0)
+		ui.level_meter(bus1_meter_r, bus1_x + 39, 207, 1, 130, 9403f53h, 9ebedffh, 0, 1, -1, -1, 1, 0)
+		ui.slider(bus1_volume, "slider", bus1_x + 32, 198, 630000, 0, 1000000, 1)
+		bus1_volume -> mouse_behaviour := -1050
+		ui.slider(bus1_double, "knob-needle", bus1_x + 28, 390, 0, 0, 1000, 1)
+		ui.menu(bus1_output, "output", bus1_x + 2, 461, 72, 20, "", 0, 1, 0, 0)
 
-	add_menu_item(bus1_output, "Default", -1)
-	for i := 0 to NUM_OUTPUT_CHANNELS - 1
-		add_menu_item(bus1_output, output_channel_name(i), i)
-	end for
+		add_menu_item(bus1_output, "Default", -1)
+		for i := 0 to NUM_OUTPUT_CHANNELS - 1
+			add_menu_item(bus1_output, output_channel_name(i), i)
+		end for
 
-	declare bus1_ui_elements[9] := (-999)
-	bus1_ui_elements[0] := get_ui_id(bus1_load)
-	bus1_ui_elements[1] := get_ui_id(bus1_pan)
-	bus1_ui_elements[2] := get_ui_id(bus1_mute)
-	bus1_ui_elements[3] := get_ui_id(bus1_solo)
-	bus1_ui_elements[4] := get_ui_id(bus1_meter_l)
-	bus1_ui_elements[5] := get_ui_id(bus1_meter_r)
-	bus1_ui_elements[6] := get_ui_id(bus1_volume)
-	bus1_ui_elements[7] := get_ui_id(bus1_double)
-	bus1_ui_elements[8] := get_ui_id(bus1_output)
-end macro
+		declare bus1_ui_elements[9] := (-999)
+		bus1_ui_elements[0] := get_ui_id(bus1_load)
+		bus1_ui_elements[1] := get_ui_id(bus1_pan)
+		bus1_ui_elements[2] := get_ui_id(bus1_mute)
+		bus1_ui_elements[3] := get_ui_id(bus1_solo)
+		bus1_ui_elements[4] := get_ui_id(bus1_meter_l)
+		bus1_ui_elements[5] := get_ui_id(bus1_meter_r)
+		bus1_ui_elements[6] := get_ui_id(bus1_volume)
+		bus1_ui_elements[7] := get_ui_id(bus1_double)
+		bus1_ui_elements[8] := get_ui_id(bus1_output)
 
-function Bus1.show()
-	show_elements_array(bus1_ui_elements)
-	call Bus1.update_meter()
-end function
+		Bus1.hide()
+	end macro
 
-function Bus1.hide()
-	hide_elements_array(bus1_ui_elements)
-end function
+	function Bus1.show()
+		show_elements_array(bus1_ui_elements)
+		call Bus1.update_meter()
+	end function
 
-// Load / Purge
-on ui_control(bus1_load)
-	enabled_buses[0] := bus1_load
-	Purge.update_purged()
-end on
+	function Bus1.hide()
+		hide_elements_array(bus1_ui_elements)
+	end function
 
-// Volume
-on ui_control(bus1_volume)
-	set_engine_par(ENGINE_PAR_VOLUME, bus1_volume, -1, -1, NI_BUS_OFFSET + 0)
-	message(bus1_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 0) & " dB")
-end on
+	// Load / Purge
+	on ui_control(bus1_load)
+		enabled_buses[0] := bus1_load
+		Purge.update_purged()
+	end on
 
-// Pan
-on ui_control(bus1_pan)
-	set_engine_par(ENGINE_PAR_PAN, bus1_pan, -1, -1, NI_BUS_OFFSET + 0)
-	message(bus1_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 0))
-	call Bus1.update_meter()
-end on
+	// Volume
+	on ui_control(bus1_volume)
+		set_engine_par(ENGINE_PAR_VOLUME, bus1_volume, -1, -1, NI_BUS_OFFSET + 0)
+		message(bus1_name & " Volume: " & get_engine_par_disp(ENGINE_PAR_VOLUME, -1, -1, NI_BUS_OFFSET + 0) & " dB")
+	end on
 
-// Mutes
-on ui_control(bus1_mute)
-	call Mixer.handle_mutes()
-end on
+	// Pan
+	on ui_control(bus1_pan)
+		set_engine_par(ENGINE_PAR_PAN, bus1_pan, -1, -1, NI_BUS_OFFSET + 0)
+		message(bus1_name & " Pan: " & get_engine_par_disp(ENGINE_PAR_PAN, -1, -1, NI_BUS_OFFSET + 0))
+		call Bus1.update_meter()
+	end on
 
-// Solos
-on ui_control(bus1_solo)
-	call Mixer.handle_solos()
-end on
+	// Mutes
+	on ui_control(bus1_mute)
+		call Mixer.handle_mutes()
+	end on
 
-// Double
-on ui_control(bus1_double)
-	if (bus1_double = 0)
-		message(bus1_name & " Double: Off")
-	else
-		message(bus1_name & " Double: " & bus1_double/10 & "% Wide")
-	end if
-end on
+	// Solos
+	on ui_control(bus1_solo)
+		call Mixer.handle_solos()
+	end on
 
-// Output
-on ui_control(bus1_output)
-	set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus1_output, -1, -1, NI_BUS_OFFSET + 0)
-end on
+	// Double
+	on ui_control(bus1_double)
+		message(bus1_name & " Double Spread: " & bus1_double/10 & "%")
+	end on
 
-function Bus1.update_meter()
-	if (bus1_pan > 500000)
-		hide_element(bus1_meter_l)
-		show_element(bus1_meter_r)
-	else
-		show_element(bus1_meter_l)
-		hide_element(bus1_meter_r)
-	end if
-end function
+	// Output
+	on ui_control(bus1_output)
+		set_engine_par(ENGINE_PAR_OUTPUT_CHANNEL, bus1_output, -1, -1, NI_BUS_OFFSET + 0)
+	end on
+
+	function Bus1.update_meter()
+		if (bus1_pan > 500000)
+			hide_element(bus1_meter_l)
+			show_element(bus1_meter_r)
+		else
+			show_element(bus1_meter_l)
+			hide_element(bus1_meter_r)
+		end if
+	end function
+END_USE_CODE

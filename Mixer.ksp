@@ -2,10 +2,10 @@ import "Menu/kontakt-mixer/Buses/Bus1.ksp"
 import "Menu/kontakt-mixer/Buses/Bus2.ksp"
 import "Menu/kontakt-mixer/Buses/Bus3.ksp"
 import "Menu/kontakt-mixer/Buses/Bus4.ksp"
-import "Menu/kontakt-mixer/Buses/Bus5.ksp"
-import "Menu/kontakt-mixer/Buses/Bus6.ksp"
-import "Menu/kontakt-mixer/Buses/Bus7.ksp"
-import "Menu/kontakt-mixer/Buses/Bus8.ksp"
+// import "Menu/kontakt-mixer/Buses/Bus5.ksp"
+// import "Menu/kontakt-mixer/Buses/Bus6.ksp"
+// import "Menu/kontakt-mixer/Buses/Bus7.ksp"
+// import "Menu/kontakt-mixer/Buses/Bus8.ksp"
 
 macro Mixer.init()
 	ui.label(mixer_background, "mixer_background", 0, 0, 633, 540)
@@ -25,18 +25,18 @@ macro Mixer.init()
 	if (NUM_BUSES >= 4)
 		Bus4.init()
 	end if
-	if (NUM_BUSES >= 5)
-		Bus5.init()
-	end if
-	if (NUM_BUSES >= 6)
-		Bus6.init()
-	end if
-	if (NUM_BUSES >= 7)
-		Bus7.init()
-	end if
-	if (NUM_BUSES >= 8)
-		Bus8.init()
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	Bus5.init()
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	Bus6.init()
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	Bus7.init()
+	// end if
+	// if (NUM_BUSES = 8)
+	// 	Bus8.init()
+	// end if
 
 	declare read enabled_buses[NUM_BUSES] := (1)
 
@@ -50,8 +50,8 @@ end macro
 
 function Mixer.show()
 	mixer_background -> hide := HIDE_PART_NOTHING
+	// call MainUi.set_blurred_background()
 	call Mixer.show_buses()
-	call MainUi.set_blurred_background()
 end function
 
 function Mixer.hide()
@@ -71,19 +71,19 @@ function Mixer.mute_and_solo_groups()
 	end if
 	if (NUM_BUSES >= 4)
 		set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[3]), bus4_groups, 6, -1)
-	end if
-	if (NUM_BUSES >= 5)
-		set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[4]), bus5_groups, 6, -1)
-	end if
-	if (NUM_BUSES >= 6)
-		set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[5]), bus6_groups, 6, -1)
-	end if
-	if (NUM_BUSES >= 7)
-		set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[6]), bus7_groups, 6, -1)
-	end if
-	if (NUM_BUSES >= 8)
-		set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[7]), bus8_groups, 6, -1)
-	end if
+	end if 
+	// if (NUM_BUSES >= 5)
+	// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[4]), bus5_groups, 6, -1)
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[5]), bus6_groups, 6, -1)
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[6]), bus7_groups, 6, -1)
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	set_engine_par_array(ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, 0_db_24 * (1 - mute_array[7]), bus8_groups, 6, -1)
+	// end if
 end function
 
 function Mixer.handle_mutes()
@@ -99,18 +99,18 @@ function Mixer.handle_mutes()
 	if (NUM_BUSES >= 4)
 		mute_array[3] := bus4_mute
 	end if
-	if (NUM_BUSES >= 5)
-		mute_array[4] := bus5_mute
-	end if
-	if (NUM_BUSES >= 6)
-		mute_array[5] := bus6_mute
-	end if
-	if (NUM_BUSES >= 7)
-		mute_array[6] := bus7_mute
-	end if
-	if (NUM_BUSES >= 8)
-		mute_array[7] := bus8_mute
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	mute_array[4] := bus5_mute
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	mute_array[5] := bus6_mute
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	mute_array[6] := bus7_mute
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	mute_array[7] := bus8_mute
+	// end if
 	
 	for i := 0 to num_elements(mute_array) - 1
 		if (mute_array[i] = 1 and solo_array[i] = 1)
@@ -134,22 +134,22 @@ function Mixer.handle_mutes()
 		bus4_mute := mute_array[3]
 		bus4_solo := solo_array[3]
 	end if
-	if (NUM_BUSES >= 5)
-		bus5_mute := mute_array[4]
-		bus5_solo := solo_array[4]
-	end if
-	if (NUM_BUSES >= 6)
-		bus6_mute := mute_array[5]
-		bus6_solo := solo_array[5]
-	end if
-	if (NUM_BUSES >= 7)
-		bus7_mute := mute_array[6]
-		bus7_solo := solo_array[6]
-	end if
-	if (NUM_BUSES >= 8)
-		bus8_mute := mute_array[7]
-		bus8_solo := solo_array[7]
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	bus5_mute := mute_array[4]
+	// 	bus5_solo := solo_array[4]
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	bus6_mute := mute_array[5]
+	// 	bus6_solo := solo_array[5]
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	bus7_mute := mute_array[6]
+	// 	bus7_solo := solo_array[6]
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	bus8_mute := mute_array[7]
+	// 	bus8_solo := solo_array[7]
+	// end if
 
 	call Mixer.mute_and_solo_groups()
 end function
@@ -167,18 +167,18 @@ function Mixer.handle_solos()
 	if (NUM_BUSES >= 4)
 		solo_array[3] := bus4_solo
 	end if
-	if (NUM_BUSES >= 5)
-		solo_array[4] := bus5_solo
-	end if
-	if (NUM_BUSES >= 6)
-		solo_array[5] := bus6_solo
-	end if
-	if (NUM_BUSES >= 7)
-		solo_array[6] := bus7_solo
-	end if
-	if (NUM_BUSES >= 8)
-		solo_array[7] := bus8_solo
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	solo_array[4] := bus5_solo
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	solo_array[5] := bus6_solo
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	solo_array[6] := bus7_solo
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	solo_array[7] := bus8_solo
+	// end if
 
 	for i := 0 to num_elements(solo_array) - 1
 		if(search(solo_array, 1) = -1)
@@ -208,51 +208,51 @@ function Mixer.handle_solos()
 		bus4_mute := mute_array[3]
 		bus4_solo := solo_array[3]
 	end if
-	if (NUM_BUSES >= 5)
-		bus5_mute := mute_array[4]
-		bus5_solo := solo_array[4]
-	end if
-	if (NUM_BUSES >= 6)
-		bus6_mute := mute_array[5]
-		bus6_solo := solo_array[5]
-	end if
-	if (NUM_BUSES >= 7)
-		bus7_mute := mute_array[6]
-		bus7_solo := solo_array[6]
-	end if
-	if (NUM_BUSES >= 8)
-		bus8_mute := mute_array[7]
-		bus8_solo := solo_array[7]
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	bus5_mute := mute_array[4]
+	// 	bus5_solo := solo_array[4]
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	bus6_mute := mute_array[5]
+	// 	bus6_solo := solo_array[5]
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	bus7_mute := mute_array[6]
+	// 	bus7_solo := solo_array[6]
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	bus8_mute := mute_array[7]
+	// 	bus8_solo := solo_array[7]
+	// end if
 
 	call Mixer.mute_and_solo_groups()
 end function
 
 function Mixer.show_buses()
 	if (NUM_BUSES >= 1)
-		call Bus1.show()
+		Bus1.show()
 	end if
 	if (NUM_BUSES >= 2)
-		call Bus2.show()
+		Bus2.show()
 	end if
 	if (NUM_BUSES >= 3)
-		call Bus3.show()
+		Bus3.show()
 	end if
 	if (NUM_BUSES >= 4)
-		call Bus4.show()
+		Bus4.show()
 	end if
-	if (NUM_BUSES >= 5)
-		call Bus5.show()
-	end if
-	if (NUM_BUSES >= 6)
-		call Bus6.show()
-	end if
-	if (NUM_BUSES >= 7)
-		call Bus7.show()
-	end if
-	if (NUM_BUSES >= 8)
-		call Bus8.show()
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	Bus5.show()
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	Bus6.show()
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	Bus7.show()
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	Bus8.show()
+	// end if
 end function
 
 function Mixer.hide_buses()
@@ -268,18 +268,18 @@ function Mixer.hide_buses()
 	if (NUM_BUSES >= 4)
 		Bus4.hide()
 	end if
-	if (NUM_BUSES >= 5)
-		Bus5.hide()
-	end if
-	if (NUM_BUSES >= 6)
-		Bus6.hide()
-	end if
-	if (NUM_BUSES >= 7)
-		Bus7.hide()
-	end if
-	if (NUM_BUSES >= 8)
-		Bus8.hide()
-	end if
+	// if (NUM_BUSES >= 5)
+	// 	Bus5.hide()
+	// end if
+	// if (NUM_BUSES >= 6)
+	// 	Bus6.hide()
+	// end if
+	// if (NUM_BUSES >= 7)
+	// 	Bus7.hide()
+	// end if
+	// if (NUM_BUSES >= 8)
+	// 	Bus8.hide()
+	// end if
 end function
 
 function Mixer.get_x_offset(bus) -> return
@@ -298,6 +298,11 @@ function set_x_offsets()
 		x_offsets[0] := 186
 		x_offsets[1] := 277
 		x_offsets[2] := 367
+	else if (NUM_BUSES = 4)
+		x_offsets[0] := 143
+		x_offsets[1] := 233
+		x_offsets[2] := 324
+		x_offsets[3] := 414
 	else if (NUM_BUSES = 8)
 		x_offsets[0] := 0
 		x_offsets[1] := 79
